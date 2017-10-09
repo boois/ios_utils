@@ -9,33 +9,30 @@
 import UIKit
 
 
-class MyCell{
+class MyAutoHeightCell{
     var IsShow:Bool = true
     var CellName:String
-//    var CellId:String
-    var CellHeight:CGFloat
+    //    var CellId:String
     var SectionName:String = ""
     var SectionHeight:CGFloat = 0
     var CellFn:((_ tableView: UITableView,_ cell:UITableViewCell, _ indexPath: IndexPath)->())?
     var SelectedFn:((_ tableView: UITableView, _ indexPath: IndexPath)->())?
-    init(CellName:String, CellHeight:CGFloat,CellFn:((_ tableView: UITableView,_ cell:UITableViewCell, _ indexPath: IndexPath)->())?,SelectedFn:((_ tableView: UITableView, _ indexPath: IndexPath)->())?) {
+    init(CellName:String, CellFn:((_ tableView: UITableView,_ cell:UITableViewCell, _ indexPath: IndexPath)->())?,SelectedFn:((_ tableView: UITableView, _ indexPath: IndexPath)->())?) {
         self.CellName = CellName
-        self.CellHeight = CellHeight
         self.CellFn = CellFn
         self.SelectedFn = SelectedFn
     }
-    init(SectionName:String,SectionHeight:CGFloat,CellName:String, CellHeight:CGFloat,CellFn:((_ tableView: UITableView,_ cell:UITableViewCell, _ indexPath: IndexPath)->())?,SelectedFn:((_ tableView: UITableView, _ indexPath: IndexPath)->())?) {
+    init(SectionName:String,SectionHeight:CGFloat,CellName:String,CellFn:((_ tableView: UITableView,_ cell:UITableViewCell, _ indexPath: IndexPath)->())?,SelectedFn:((_ tableView: UITableView, _ indexPath: IndexPath)->())?) {
         self.SectionName = SectionName
         self.SectionHeight = SectionHeight
         self.CellName = CellName
-        self.CellHeight = CellHeight
         self.CellFn = CellFn
         self.SelectedFn = SelectedFn
     }
 }
 
 
-class MyTableViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
+class MyAutoHeightTableViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
     
     var tabview : UITableView?{
         return nil
@@ -43,7 +40,7 @@ class MyTableViewController: UIViewController,UITableViewDataSource,UITableViewD
     func regCell(tabview:UITableView?) {
         
     }
-    func getData()->[MyCell] {
+    func getData()->[MyAutoHeightCell] {
         return []
     }
     
@@ -52,17 +49,16 @@ class MyTableViewController: UIViewController,UITableViewDataSource,UITableViewD
         tabviewInit()
         regCell(tabview: self.tabview)
     }
-    var list:[MyCell] = []
+    var list:[MyAutoHeightCell] = []
     func tabviewInit(){
         //tabview.separatorStyle = UITableViewCellSeparatorStyle.none
         tabview?.delegate = self
         tabview?.dataSource=self
         tabview?.backgroundColor = UIColor(colorLiteralRed: 241/255, green: 241/255, blue: 241/255, alpha: 1)
+        tabview?.estimatedRowHeight = 80.0;
+        tabview?.rowHeight = UITableViewAutomaticDimension;
         list = getData()
-    }
-    func refreshData(list:[MyCell]){
-        self.list = list
-        tabview?.reloadData()
+        
     }
     func tabviewRegCells() {
         // 在这里注册Nib
@@ -80,10 +76,6 @@ class MyTableViewController: UIViewController,UITableViewDataSource,UITableViewD
         if (cell == nil ){  return UITableViewCell() }
         list[indexPath.row].CellFn?(tableView,cell!,indexPath)
         return cell!
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if !list[indexPath.row].IsShow { return 0;}
-        return list[indexPath.row].CellHeight
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
